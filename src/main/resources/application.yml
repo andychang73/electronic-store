@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: Electronic Store
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:h2:mem:electronic-store
+    username: sa
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  flyway:
+    locations: classpath:db/migration
+    user: ${FLYWAY_USERNAME}
+    driver-class-name: org.h2.Driver
+    enabled: true
+    schema: electronic-store
+
+mybatis-plus:
+  mapper-locations: classpath:/mappers/*Mapper.xml
+  typeAliasesPackage: com.abstractionizer.electronicstore.storage.rdbms.entities
+  type-enums-package: com.abstractionizer.electronicstore.**.enumerations
+  executor-type: reuse
+
+  configurations:
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+
+token:
+  generate:
+    limit: 3
