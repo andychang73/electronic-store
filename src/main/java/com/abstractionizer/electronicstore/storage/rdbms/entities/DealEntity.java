@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @ToString
@@ -24,12 +22,4 @@ public class DealEntity {
     private DealType type;
 
     private String policy;
-
-    private String creator;
-
-    private String updater;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }

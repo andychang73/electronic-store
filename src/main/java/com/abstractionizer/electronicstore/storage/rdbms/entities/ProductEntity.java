@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,21 +20,11 @@ public class ProductEntity {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private ProductType type;
-
     private String name;
+
+    private ProductType type;
 
     private BigDecimal price;
 
-    private Integer stock;
-
     private ProductStatus status;
-
-    private String creator;
-
-    private String updater;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }

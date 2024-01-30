@@ -2,4 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.abstractionizer.electronicstore.storage.rdbms.mappers.ProductMapper">
 
+    <insert id="insertBatch">
+        INSERT INTO product(name, type, price)
+        VALUES
+            <foreach collection="entities" item="item" separator=",">
+                (#{item.name},#{item.type},#{item.price})
+            </foreach>
+    </insert>
+
+    <select id="countByNames" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM product
+        WHERE name IN
+        <foreach collection="names" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

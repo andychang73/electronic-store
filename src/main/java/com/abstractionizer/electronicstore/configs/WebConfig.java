@@ -17,6 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(adminAuthInterceptor).order(Ordered.HIGHEST_PRECEDENCE).addPathPatterns("/admin/**");
+        // todo
+//        registry.addInterceptor(adminAuthInterceptor).order(Ordered.HIGHEST_PRECEDENCE).addPathPatterns("/admin/**");
     }
 }
