@@ -1,8 +1,6 @@
 package com.abstractionizer.electronicstore.businesses;
 
-import com.abstractionizer.electronicstore.enumerations.DealType;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -12,5 +10,5 @@ public interface ProductBusiness {
 
     void remove(Integer productId);
 
-    void createDeal(DealType type, HttpServletRequest request);
+
 }

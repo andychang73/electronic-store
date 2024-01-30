@@ -19,4 +19,7 @@ public class CreateProductDto {
 
     @Min(1)
     private BigDecimal price;
+
+    @Min(1)
+    private Integer stock;
 }

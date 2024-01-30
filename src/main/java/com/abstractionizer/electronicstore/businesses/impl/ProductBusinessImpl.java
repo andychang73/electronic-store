@@ -25,12 +25,11 @@ import static com.abstractionizer.electronicstore.constant.RedisKey.getRKeyCreat
 public class ProductBusinessImpl implements ProductBusiness {
 
     private final RedisUtil redisUtil;
-    private final DealFactory dealFactory;
+
     private final ProductService productService;
 
-    public ProductBusinessImpl(RedisUtil redisUtil, DealFactory dealFactory, ProductService productService) {
+    public ProductBusinessImpl(RedisUtil redisUtil, ProductService productService) {
         this.redisUtil = redisUtil;
-        this.dealFactory = dealFactory;
         this.productService = productService;
     }
 
@@ -65,10 +64,5 @@ public class ProductBusinessImpl implements ProductBusiness {
                 .build();
 
         productService.updateProduct(product);
-    }
-
-    @Override
-    public void createDeal(@NonNull final DealType type, @NonNull final HttpServletRequest request) {
-        dealFactory.createDeal(type, request);
     }
 }

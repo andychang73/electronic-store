@@ -3,10 +3,10 @@
 <mapper namespace="com.abstractionizer.electronicstore.storage.rdbms.mappers.ProductMapper">
 
     <insert id="insertBatch">
-        INSERT INTO product(name, type, price)
+        INSERT INTO product(name, type, price, stock)
         VALUES
             <foreach collection="entities" item="item" separator=",">
-                (#{item.name},#{item.type},#{item.price})
+                (#{item.name},#{item.type},#{item.price},#{item.stock})
             </foreach>
     </insert>
 

@@ -18,7 +18,8 @@ public interface ProductConverter {
     @Mappings({
             @Mapping(target = "name", source = "name"),
             @Mapping(target = "type", source = "type"),
-            @Mapping(target = "price", source = "price")
+            @Mapping(target = "price", source = "price"),
+            @Mapping(target = "stock", source = "stock")
     })
     ProductEntity toProductEntity(CreateProductDto dto);
 

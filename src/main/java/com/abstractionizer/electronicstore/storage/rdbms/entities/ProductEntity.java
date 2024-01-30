@@ -26,6 +26,7 @@ public class ProductEntity {
     private ProductType type;
 
     private BigDecimal price;
+    private Integer stock;
 
     private ProductStatus status;
 }

@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS product(
     type VARCHAR(32) NOT NULL,
     name VARCHAR(128) NOT NULL UNIQUE,
     price DECIMAL(21,4) NOT NULL,
+    stock INT NOT NULL,
     status VARCHAR(21) DEFAULT 'AVAILABLE'
 );
 
@@ -30,6 +31,6 @@ CREATE TABLE IF NOT EXISTS deal(
 
 INSERT INTO admin(id, name, password) VALUES(1, 'admin','$2a$10$FFl5kHqw3fIOdbTuHppmKOf1C7uVyqW.tWokYHSboyh3l3UZuKPd.');
 
-INSERT INTO product(type, name, price) VALUES('COMPUTER','computer',10000.00);
+INSERT INTO product(type, name, price, stock) VALUES('COMPUTER','computer',10000.00,100);
 
 INSERT INTO deal(name, type, policy, apply_order, stackable) VALUES('deal','BUY_ONE_GET_ONE_DISCOUNT','test test test', 1, true);

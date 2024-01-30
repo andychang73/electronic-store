@@ -3,6 +3,7 @@ package com.abstractionizer.electronicstore.configs;
 import com.abstractionizer.electronicstore.interceptors.AdminAuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,6 +18,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(adminAuthInterceptor).order(Ordered.HIGHEST_PRECEDENCE).addPathPatterns("/admin/**");
+        InterceptorRegistration registration = registry.addInterceptor(adminAuthInterceptor).order(Ordered.HIGHEST_PRECEDENCE);
+        registration.addPathPatterns("/deal/{type}");
+        registration.addPathPatterns("/product");
+        registration.addPathPatterns("/product/{productId}");
     }
 }
