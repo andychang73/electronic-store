@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface DealMapper extends BaseMapper<DealEntity> {
+    int countByNameOrApplyOrder(String name, Integer applyOrder);
+
 }

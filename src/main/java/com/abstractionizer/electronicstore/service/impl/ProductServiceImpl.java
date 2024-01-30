@@ -1,5 +1,7 @@
 package com.abstractionizer.electronicstore.service.impl;
 
+import com.abstractionizer.electronicstore.enumerations.ProductStatus;
+import com.abstractionizer.electronicstore.enumerations.ProductType;
 import com.abstractionizer.electronicstore.exceptions.BusinessException;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
 import com.abstractionizer.electronicstore.service.ProductService;
@@ -8,12 +10,13 @@ import com.abstractionizer.electronicstore.storage.rdbms.mappers.ProductMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.abstractionizer.electronicstore.errors.Error.BAD_REQUEST_ERROR;
-import static com.abstractionizer.electronicstore.errors.Error.DATA_IS_CREATED;
+import static com.abstractionizer.electronicstore.errors.Error.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -60,4 +63,24 @@ public class ProductServiceImpl implements ProductService {
             throw new BusinessException(DATA_IS_CREATED, "Product(s) has been created");
         }
     }
+
+    @Override
+    public ProductEntity findById(@NotNull final Integer productId) {
+        return productMapper.findById(productId);
+    }
+
+    @Override
+    public void ifProductNotExistsThenThrow(@NotNull final Integer productId) {
+        if(Objects.isNull(findById(productId))){
+            throw new BusinessException(DATA_NOT_FOUND, String.format("Product id '%s' was not found", productId));
+        }
+    }
+
+    @Override
+    public void updateProduct(ProductEntity entity) {
+        if(productMapper.updateProduct(entity) != 1){
+            throw new BusinessException(UPDATE_DATA_FAIL, String.format("Update data failed, details: %S", entity));
+        }
+    }
+
 }

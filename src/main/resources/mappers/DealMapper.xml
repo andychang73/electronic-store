@@ -2,4 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.abstractionizer.electronicstore.storage.rdbms.mappers.DealMapper">
 
+    <select id="countByNameOrApplyOrder" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM deal
+        <where>
+            <if test="name != null">
+                name = #{name}
+            </if>
+            <if test="applyOrder != null">
+                apply_order = #{applyOrder}
+            </if>
+        </where>
+
+    </select>
 </mapper>

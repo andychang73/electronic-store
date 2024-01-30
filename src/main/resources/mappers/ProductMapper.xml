@@ -10,6 +10,25 @@
             </foreach>
     </insert>
 
+    <update id="updateProduct">
+        UPDATE product
+        <set>
+            <if test="name != null">
+                name = #{name}
+            </if>
+            <if test="type != null">
+                type = #{type}
+            </if>
+            <if test="price != null">
+                price = #{price}
+            </if>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
     <select id="countByNames" resultType="java.lang.Integer">
         SELECT COUNT(id)
         FROM product
@@ -17,5 +36,11 @@
         <foreach collection="names" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>
+    </select>
+    <select id="findById"
+            resultType="com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity">
+        SELECT *
+        FROM product
+        WHERE id = #{id}
     </select>
 </mapper>

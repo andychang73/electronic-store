@@ -13,4 +13,9 @@ public interface ProductMapper extends BaseMapper<ProductEntity> {
     int countByNames(Collection<String> names);
 
     void insertBatch(Collection<ProductEntity> entities);
+
+    ProductEntity findById(Integer id);
+
+    int updateProduct(ProductEntity entity);
+
 }

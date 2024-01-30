@@ -16,4 +16,9 @@ public interface ProductService {
     void insertBatch(Collection<ProductEntity> entities);
 
     void ifNameExistsThenThrow(int count);
+
+    ProductEntity findById(Integer productId);
+    void ifProductNotExistsThenThrow(Integer productId);
+
+    void updateProduct(ProductEntity entity);
 }

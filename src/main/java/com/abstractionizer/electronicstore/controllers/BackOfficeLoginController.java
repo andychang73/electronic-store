@@ -9,14 +9,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// todo change it to back office login controller?
 @RestController
 @RequestMapping("/login")
-public class LoginController {
+public class BackOfficeLoginController {
 
     private final AdminLoginBusiness adminLoginBusiness;
 
-    public LoginController(AdminLoginBusiness adminLoginBusiness) {
+    public BackOfficeLoginController(AdminLoginBusiness adminLoginBusiness) {
         this.adminLoginBusiness = adminLoginBusiness;
     }
 

@@ -24,7 +24,12 @@ CREATE TABLE IF NOT EXISTS deal(
     type VARCHAR(64) NOT NULL,
     policy VARCHAR(255) NOT NULL,
     apply_order INT NOT NULL UNIQUE,
-    stackable BOOLEAN NOT NULL
+    stackable BOOLEAN NOT NULL,
+    CONSTRAINT idx_name_type UNIQUE(name, type)
 );
 
 INSERT INTO admin(id, name, password) VALUES(1, 'admin','$2a$10$FFl5kHqw3fIOdbTuHppmKOf1C7uVyqW.tWokYHSboyh3l3UZuKPd.');
+
+INSERT INTO product(type, name, price) VALUES('COMPUTER','computer',10000.00);
+
+INSERT INTO deal(name, type, policy, apply_order, stackable) VALUES('deal','BUY_ONE_GET_ONE_DISCOUNT','test test test', 1, true);

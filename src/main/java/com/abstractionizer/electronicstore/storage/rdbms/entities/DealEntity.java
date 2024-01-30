@@ -4,13 +4,14 @@ import com.abstractionizer.electronicstore.enumerations.DealType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("deal")
 public class DealEntity {
 
@@ -22,4 +23,8 @@ public class DealEntity {
     private DealType type;
 
     private String policy;
+
+    private Integer applyOrder;
+
+    private Boolean stackable;
 }
