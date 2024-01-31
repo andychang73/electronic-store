@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Discount {
+public class BuyOneGetOneDiscountPolicy {
+    private Integer productId;
     private BigDecimal discount;
 }

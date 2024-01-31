@@ -3,7 +3,7 @@ package com.abstractionizer.electronicstore.handlers.deals;
 import com.abstractionizer.electronicstore.enumerations.DealType;
 import com.abstractionizer.electronicstore.exceptions.BusinessException;
 import com.abstractionizer.electronicstore.model.deal.CreateOneGetOneDealDto;
-import com.abstractionizer.electronicstore.model.deal.Discount;
+import com.abstractionizer.electronicstore.model.deal.BuyOneGetOneDiscountPolicy;
 import com.abstractionizer.electronicstore.service.DealService;
 import com.abstractionizer.electronicstore.service.ProductService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.DealEntity;
@@ -41,14 +41,15 @@ public class BuyOneGetOneDiscountHandlerAbstract extends AbstractDealHandler<Cre
         dealService.ifDealNameExistThenThrow(dto.getName());
         dealService.ifApplyOrderExistThenThrow(dto.getApplyOrder());
 
-        Discount discount = Discount.builder()
+        BuyOneGetOneDiscountPolicy buyOneGetOneDiscountPolicy = BuyOneGetOneDiscountPolicy.builder()
+                .productId(dto.getProductId())
                 .discount(dto.getDiscount())
                 .build();
 
         DealEntity deal = DealEntity.builder()
                 .name(dto.getName())
                 .type(DealType.BUY_ONE_GET_ONE_DISCOUNT)
-                .policy(objectMapper.writeValueAsString(discount))
+                .policy(objectMapper.writeValueAsString(buyOneGetOneDiscountPolicy))
                 .applyOrder(dto.getApplyOrder())
                 .stackable(dto.getStackable())
                 .build();

@@ -35,7 +35,8 @@ public class ProductController {
     }
 
     @PutMapping({"/select/{productId}"})
-    public SuccessResp<String> putProductIntoBasket(@RequestParam(required = false) String basketId){
-        return null;
+    public SuccessResp<String> putProductIntoBasket(@PathVariable Integer productId,
+                                                    @RequestParam(required = false) String basketId){
+        return new SuccessResp<>(productBusiness.selectProduct(productId, basketId));
     }
 }

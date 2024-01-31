@@ -29,6 +29,12 @@
         WHERE id = #{id}
     </update>
 
+    <update id="reduceStockByOne">
+        UPDATE product
+        SET stock = stock-1
+        WHERE id = #{id}
+    </update>
+
     <select id="countByNames" resultType="java.lang.Integer">
         SELECT COUNT(id)
         FROM product
@@ -41,6 +47,13 @@
             resultType="com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity">
         SELECT *
         FROM product
-        WHERE id = #{id}
+        WHERE id = #{id} AND status = #{status}
+    </select>
+    <select id="selectByIdForUpdate"
+            resultType="com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity">
+        SELECT *
+        FROM product
+        WHERE id = #{id} AND status = #{status}
+        FOR UPDATE
     </select>
 </mapper>

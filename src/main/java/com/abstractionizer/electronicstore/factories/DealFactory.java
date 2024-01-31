@@ -25,9 +25,9 @@ public class DealFactory {
 
     public void createDeal(@NonNull final DealType type, @NonNull final HttpServletRequest request){
 
-        AbstractDealHandler<?> abstractDealHandler = Optional.ofNullable(dealHandlerMap.get(type))
+        AbstractDealHandler<?> dealHandlers = Optional.ofNullable(dealHandlerMap.get(type))
                 .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Deal handler '%s' has not been implemented", type)));
 
-        abstractDealHandler.createDeal(request);
+        dealHandlers.createDeal(request);
     }
 }

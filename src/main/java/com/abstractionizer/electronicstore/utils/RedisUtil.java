@@ -41,7 +41,6 @@ public class RedisUtil {
         return get(key, clazz) != null;
     }
 
-    @SneakyThrows
     public boolean deleteKey(@NonNull final String key){
         String value = redis.getRedisTemplate().remove(key);
         return Objects.nonNull(value);

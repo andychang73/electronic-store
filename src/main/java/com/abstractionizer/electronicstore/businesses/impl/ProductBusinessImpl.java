@@ -1,17 +1,16 @@
 package com.abstractionizer.electronicstore.businesses.impl;
 
+import com.abstractionizer.electronicstore.businesses.BasketBusiness;
 import com.abstractionizer.electronicstore.businesses.ProductBusiness;
 import com.abstractionizer.electronicstore.converters.ProductConverter;
-import com.abstractionizer.electronicstore.enumerations.DealType;
 import com.abstractionizer.electronicstore.enumerations.ProductStatus;
-import com.abstractionizer.electronicstore.factories.DealFactory;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
 import com.abstractionizer.electronicstore.service.ProductService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity;
 import com.abstractionizer.electronicstore.utils.RedisUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +24,13 @@ import static com.abstractionizer.electronicstore.constant.RedisKey.getRKeyCreat
 public class ProductBusinessImpl implements ProductBusiness {
 
     private final RedisUtil redisUtil;
-
+    private final BasketBusiness basketBusiness;
     private final ProductService productService;
 
-    public ProductBusinessImpl(RedisUtil redisUtil, ProductService productService) {
+    public ProductBusinessImpl(RedisUtil redisUtil, BasketBusiness basketBusiness,
+                               ProductService productService) {
         this.redisUtil = redisUtil;
+        this.basketBusiness = basketBusiness;
         this.productService = productService;
     }
 
@@ -41,11 +42,9 @@ public class ProductBusinessImpl implements ProductBusiness {
 
             Set<String> productNames = productService.getProductNameSet(dtos);
 
-            productService.checkIfInputDuplicateNames(dtos.size(), productNames.size());
+            productService.checkIfInputNamesDuplicated(dtos.size(), productNames.size());
 
-            int count = productService.countByProductName(productNames);
-
-            productService.ifNameExistsThenThrow(count);
+            productService.ifNameExistsThenThrow(productNames);
 
             List<ProductEntity> products = ProductConverter.INSTANCE.toProductEntities(dtos);
 
@@ -53,6 +52,7 @@ public class ProductBusinessImpl implements ProductBusiness {
         });
     }
 
+    @Transactional
     @Override
     public void remove(@NonNull final Integer productId) {
 
@@ -64,5 +64,20 @@ public class ProductBusinessImpl implements ProductBusiness {
                 .build();
 
         productService.updateProduct(product);
+    }
+
+    @Transactional
+    @Override
+    public String selectProduct(@NonNull final Integer productId, @Nullable final String basketId) {
+
+        productService.ifProductNotExistsThenThrow(productId);
+
+        ProductEntity product = productService.selectProductForUpdateOrThrow(productId);
+
+        productService.ifProductStockInsufficientThenThrow(product.getStock());
+
+        productService.reduceProductStockByOne(product.getId());
+
+        return basketBusiness.putProductIntoBasket(basketId, product);
     }
 }

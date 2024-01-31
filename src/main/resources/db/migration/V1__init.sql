@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS deal(
 
 INSERT INTO admin(id, name, password) VALUES(1, 'admin','$2a$10$FFl5kHqw3fIOdbTuHppmKOf1C7uVyqW.tWokYHSboyh3l3UZuKPd.');
 
-INSERT INTO product(type, name, price, stock) VALUES('COMPUTER','computer',10000.00,100);
+INSERT INTO product(type, name, price, stock) VALUES('COMPUTER','Mac',50000.00,100);
+INSERT INTO product(type, name, price, stock) VALUES('MOBILE_PHONE','iPhone',5000.00,1);
+INSERT INTO product(type, name, price, stock) VALUES('TABLET','iPad',6000.00,0);
 
 INSERT INTO deal(name, type, policy, apply_order, stackable) VALUES('deal','BUY_ONE_GET_ONE_DISCOUNT','test test test', 1, true);

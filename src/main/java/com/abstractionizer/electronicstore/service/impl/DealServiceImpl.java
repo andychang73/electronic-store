@@ -9,6 +9,8 @@ import lombok.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.abstractionizer.electronicstore.errors.Error.BAD_REQUEST_ERROR;
 
 @Service
@@ -37,6 +39,11 @@ public class DealServiceImpl implements DealService {
         if(countByNameOrApplyOrder(name, null) > 0){
             throw new BusinessException(BAD_REQUEST_ERROR, String.format("Deal name '%s' already exists", name));
         }
+    }
+
+    @Override
+    public List<DealEntity> getAllDealsInAscOrderByApplyOrder() {
+        return dealMapper.selectAllDealsInAscOrderByApplyOrder();
     }
 
     private int countByNameOrApplyOrder(@Nullable final String name, @Nullable final Integer applyOrder){

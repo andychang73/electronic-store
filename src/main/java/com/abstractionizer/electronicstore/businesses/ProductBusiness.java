@@ -11,4 +11,5 @@ public interface ProductBusiness {
     void remove(Integer productId);
 
 
+    String selectProduct(Integer productId, String basketId);
 }

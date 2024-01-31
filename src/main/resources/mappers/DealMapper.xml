@@ -15,4 +15,10 @@
         </where>
 
     </select>
+    <select id="selectAllDealsInAscOrderByApplyOrder"
+            resultType="com.abstractionizer.electronicstore.storage.rdbms.entities.DealEntity">
+        SELECT *
+        FROM deal
+        ORDER BY apply_order
+    </select>
 </mapper>
