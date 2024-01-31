@@ -4,6 +4,7 @@ import com.abstractionizer.electronicstore.businesses.BasketBusiness;
 import com.abstractionizer.electronicstore.businesses.ProductBusiness;
 import com.abstractionizer.electronicstore.converters.ProductConverter;
 import com.abstractionizer.electronicstore.enumerations.ProductStatus;
+import com.abstractionizer.electronicstore.model.product.BasketDto;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
 import com.abstractionizer.electronicstore.service.ProductService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity;
@@ -68,7 +69,7 @@ public class ProductBusinessImpl implements ProductBusiness {
 
     @Transactional
     @Override
-    public String selectProduct(@NonNull final Integer productId, @Nullable final String basketId) {
+    public BasketDto selectProduct(@NonNull final Integer productId, @Nullable final String basketId) {
 
         productService.ifProductNotExistsThenThrow(productId);
 
@@ -79,5 +80,22 @@ public class ProductBusinessImpl implements ProductBusiness {
         productService.reduceProductStockByOne(product.getId());
 
         return basketBusiness.putProductIntoBasket(basketId, product);
+    }
+
+    @Transactional
+    @Override
+    public BasketDto removeProduct(@NonNull final Integer productId, @Nullable final String basketId) {
+
+        productService.ifProductNotExistsThenThrow(productId);
+
+        BasketDto basketDto = basketBusiness.removeProductFromBasket(basketId, productId);
+
+        ProductEntity product = productService.selectProductForUpdateOrThrow(productId);
+
+        product.setStock(product.getStock() + 1);
+
+        productService.updateProduct(product);
+
+        return basketDto;
     }
 }

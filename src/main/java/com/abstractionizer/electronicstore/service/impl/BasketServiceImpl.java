@@ -1,5 +1,6 @@
 package com.abstractionizer.electronicstore.service.impl;
 
+import com.abstractionizer.electronicstore.exceptions.BusinessException;
 import com.abstractionizer.electronicstore.model.product.ProductInBasketDto;
 import com.abstractionizer.electronicstore.service.BasketService;
 import com.abstractionizer.electronicstore.storage.basket.Basket;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.abstractionizer.electronicstore.errors.Error.DATA_NOT_FOUND;
 
 @Service
 public class BasketServiceImpl implements BasketService {
@@ -38,6 +41,18 @@ public class BasketServiceImpl implements BasketService {
     @Override
     public void putBasketBack(@NonNull final String basketId, @NonNull final Map<Integer, ProductInBasketDto> basket) {
         this.basket.getBasket().put(basketId, basket);
+    }
+
+    @Override
+    public Map<Integer, ProductInBasketDto> getBasketOrThrow(@NonNull final String basketId) {
+        return Optional.ofNullable(basket.getBasket().get(basketId))
+                .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Invalid basket id '%s'", basketId)));
+    }
+
+    @Override
+    public ProductInBasketDto getProductFromBasketOrThrow(@NonNull final Map<Integer, ProductInBasketDto> basket, @NonNull final Integer productId) {
+        return Optional.ofNullable(basket.get(productId))
+                .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("This basket does not have this product! id: '%s'", productId)));
     }
 
     @SneakyThrows

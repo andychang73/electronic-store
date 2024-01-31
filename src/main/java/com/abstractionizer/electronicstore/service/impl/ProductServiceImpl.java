@@ -97,10 +97,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void reduceProductStockByOne(@NotNull final Integer id) {
-        if(productMapper.reduceStockByOne(id) != 1){
+        if(productMapper.adjustStock(id, -1) != 1){
             throw new BusinessException(UPDATE_DATA_FAIL, String.format("Failed to reduce product id '%s' stock by one", id));
         }
     }
-
 
 }

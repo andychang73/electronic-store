@@ -14,24 +14,27 @@
         UPDATE product
         <set>
             <if test="name != null">
-                name = #{name}
+                name = #{name},
             </if>
             <if test="type != null">
-                type = #{type}
+                type = #{type},
             </if>
             <if test="price != null">
-                price = #{price}
+                price = #{price},
             </if>
             <if test="status != null">
-                status = #{status}
+                status = #{status},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
             </if>
         </set>
         WHERE id = #{id}
     </update>
 
-    <update id="reduceStockByOne">
+    <update id="adjustStock">
         UPDATE product
-        SET stock = stock-1
+        SET stock = stock + #{adjustment}
         WHERE id = #{id}
     </update>
 

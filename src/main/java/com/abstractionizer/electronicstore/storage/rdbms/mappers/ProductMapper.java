@@ -21,5 +21,5 @@ public interface ProductMapper extends BaseMapper<ProductEntity> {
 
     ProductEntity selectByIdForUpdate(Integer id, ProductStatus status);
 
-    int reduceStockByOne(Integer id);
+    int adjustStock(Integer id, Integer adjustment);
 }

@@ -1,5 +1,6 @@
 package com.abstractionizer.electronicstore.businesses;
 
+import com.abstractionizer.electronicstore.model.product.BasketDto;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
 
 import java.util.List;
@@ -11,5 +12,7 @@ public interface ProductBusiness {
     void remove(Integer productId);
 
 
-    String selectProduct(Integer productId, String basketId);
+    BasketDto selectProduct(Integer productId, String basketId);
+
+    BasketDto removeProduct(Integer productId, String basketId);
 }

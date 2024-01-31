@@ -27,4 +27,5 @@ public interface ProductService {
     void ifProductStockInsufficientThenThrow(Integer stock);
 
     void reduceProductStockByOne(Integer id);
+
 }

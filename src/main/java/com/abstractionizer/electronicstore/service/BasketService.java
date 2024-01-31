@@ -11,4 +11,9 @@ public interface BasketService {
     Map<Integer, ProductInBasketDto> getBasketOrGenerate(String basketId);
 
     void putBasketBack(String basketId, Map<Integer, ProductInBasketDto> basket);
+
+    Map<Integer, ProductInBasketDto> getBasketOrThrow(String basketId);
+
+    ProductInBasketDto getProductFromBasketOrThrow(Map<Integer, ProductInBasketDto> basket, Integer productId);
+
 }

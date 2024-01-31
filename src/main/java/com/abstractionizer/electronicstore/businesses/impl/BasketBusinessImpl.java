@@ -1,6 +1,7 @@
 package com.abstractionizer.electronicstore.businesses.impl;
 
 import com.abstractionizer.electronicstore.businesses.BasketBusiness;
+import com.abstractionizer.electronicstore.model.product.BasketDto;
 import com.abstractionizer.electronicstore.model.product.ProductInBasketDto;
 import com.abstractionizer.electronicstore.service.BasketService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity;
@@ -22,7 +23,7 @@ public class BasketBusinessImpl implements BasketBusiness {
     }
 
     @Override
-    public String putProductIntoBasket(@Nullable String basketId, @NonNull final ProductEntity product) {
+    public BasketDto putProductIntoBasket(@Nullable String basketId, @NonNull final ProductEntity product) {
 
         basketId = basketService.checkBasketIdOrGenerate(basketId);
 
@@ -44,6 +45,36 @@ public class BasketBusinessImpl implements BasketBusiness {
 
         basketService.putBasketBack(basketId, basket);
         log.info("after: {}", basket);
-        return basketId;
+
+        return BasketDto.builder()
+                .basketId(basketId)
+                .basket(basket)
+                .build();
+    }
+
+    @Override
+    public BasketDto removeProductFromBasket(@NonNull final String basketId, @NonNull final Integer productId) {
+
+        Map<Integer, ProductInBasketDto> basket = basketService.getBasketOrThrow(basketId);
+
+        ProductInBasketDto productInBasket = basketService.getProductFromBasketOrThrow(basket, productId);
+
+        if(productInBasket.getQuantity() <= 1){
+            basket.remove(productId);
+            return BasketDto.builder()
+                    .basketId(basketId)
+                    .basket(basket)
+                    .build();
+        }
+
+        productInBasket.setQuantity(productInBasket.getQuantity() - 1);
+        basket.put(productId, productInBasket);
+
+        basketService.putBasketBack(basketId, basket);
+
+        return BasketDto.builder()
+                .basketId(basketId)
+                .basket(basket)
+                .build();
     }
 }

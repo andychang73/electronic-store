@@ -1,6 +1,7 @@
 package com.abstractionizer.electronicstore.controllers;
 
 import com.abstractionizer.electronicstore.businesses.ProductBusiness;
+import com.abstractionizer.electronicstore.model.product.BasketDto;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
 import com.abstractionizer.electronicstore.response.SuccessResp;
 import jakarta.validation.Valid;
@@ -34,9 +35,15 @@ public class ProductController {
         return new SuccessResp<>();
     }
 
-    @PutMapping({"/select/{productId}"})
-    public SuccessResp<String> putProductIntoBasket(@PathVariable Integer productId,
-                                                    @RequestParam(required = false) String basketId){
+    @PutMapping({"/{productId}/select"})
+    public SuccessResp<BasketDto> putProductIntoBasket(@PathVariable Integer productId,
+                                                       @RequestParam(required = false) String basketId){
         return new SuccessResp<>(productBusiness.selectProduct(productId, basketId));
+    }
+
+    @PutMapping("/{productId}/remove")
+    public SuccessResp<BasketDto> removeAProductFromBasket(@PathVariable Integer productId,
+                                                           @RequestParam String basketId){
+        return new SuccessResp<>(productBusiness.removeProduct(productId, basketId));
     }
 }
