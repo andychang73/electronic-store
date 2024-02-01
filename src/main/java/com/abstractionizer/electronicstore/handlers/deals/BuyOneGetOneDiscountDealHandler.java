@@ -29,7 +29,7 @@ public class BuyOneGetOneDiscountDealHandler extends AbstractDealHandler<CreateO
     private final ProductService productService;
     public BuyOneGetOneDiscountDealHandler(ObjectMapper objectMapper, DealService dealService,
                                            ProductService productService) {
-        super(objectMapper, dealService);
+        super(objectMapper, dealService, productService);
         this.productService = productService;
     }
 
@@ -74,9 +74,12 @@ public class BuyOneGetOneDiscountDealHandler extends AbstractDealHandler<CreateO
             return dto;
         }
 
-        dto.getDealsApplied().add(dealName);
-
         Integer quantity = productVo.getQuantity();
+
+        if(quantity > 1){
+            dto.getDealsApplied().add(dealName);
+        }
+
         BigDecimal subTotal = BigDecimal.ZERO;
         boolean isSecondItem = false;
 

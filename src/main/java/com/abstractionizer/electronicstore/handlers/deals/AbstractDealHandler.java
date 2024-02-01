@@ -5,6 +5,7 @@ import com.abstractionizer.electronicstore.exceptions.BusinessException;
 import com.abstractionizer.electronicstore.model.deal.BaseDeal;
 import com.abstractionizer.electronicstore.model.receipt.ReceiptDto;
 import com.abstractionizer.electronicstore.service.DealService;
+import com.abstractionizer.electronicstore.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +14,15 @@ import static com.abstractionizer.electronicstore.errors.Error.BAD_REQUEST_ERROR
 
 public abstract class AbstractDealHandler<T extends BaseDeal> {
 
-    protected final ObjectMapper objectMapper;
     protected final DealService dealService;
+    protected final ProductService productService;
+    protected final ObjectMapper objectMapper;
 
-    protected AbstractDealHandler(ObjectMapper objectMapper, DealService dealService) {
+
+    protected AbstractDealHandler(ObjectMapper objectMapper, DealService dealService, ProductService productService) {
         this.objectMapper = objectMapper;
         this.dealService = dealService;
+        this.productService = productService;
     }
 
     public abstract void createDeal(HttpServletRequest request);
@@ -29,7 +33,6 @@ public abstract class AbstractDealHandler<T extends BaseDeal> {
 
     protected abstract T policyStrToDealParam(String policy);
     protected abstract void validateCreateDealDto(T createDealDto);
-
 
     protected void validateName(String name){
         if(StringUtils.isEmpty(name)){

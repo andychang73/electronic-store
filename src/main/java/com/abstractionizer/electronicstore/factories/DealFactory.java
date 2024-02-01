@@ -26,16 +26,16 @@ public class DealFactory {
 
     public void createDeal(@NonNull final DealType type, @NonNull final HttpServletRequest request) {
 
-        AbstractDealHandler<?> dealHandlers = Optional.ofNullable(dealHandlerMap.get(type))
-                .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Deal handler '%s' has not been implemented", type)));
+        AbstractDealHandler<?> dealHandler = Optional.ofNullable(dealHandlerMap.get(type))
+                .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Deal handler '%s' has not yet been implemented", type)));
 
-        dealHandlers.createDeal(request);
+        dealHandler.createDeal(request);
     }
 
     public ReceiptDto applyDeals(@NonNull final DealType type, @NonNull final String dealName,
                                  @NonNull final String policyStr, @NonNull final ReceiptDto receipt) {
         return Optional.ofNullable(dealHandlerMap.get(type))
                 .map(handler -> handler.apply(receipt, dealName, policyStr))
-                .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Deal handler '%s' has not been implemented", type)));
+                .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Deal handler '%s' has not yet been implemented", type)));
     }
 }

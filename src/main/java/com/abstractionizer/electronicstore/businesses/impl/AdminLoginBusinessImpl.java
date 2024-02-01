@@ -30,6 +30,7 @@ public class AdminLoginBusinessImpl implements AdminLoginBusiness {
 
     @Override
     public String login(@NonNull final LoginDto dto) {
+
         AdminEntity admin = adminService.getAdminByNameOrThrow(dto.getUsername());
 
         loginService.verifyPasswordOrThrow(dto.getPassword(), admin.getPassword());
