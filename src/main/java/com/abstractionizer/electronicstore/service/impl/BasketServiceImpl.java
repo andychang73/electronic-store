@@ -1,7 +1,7 @@
 package com.abstractionizer.electronicstore.service.impl;
 
 import com.abstractionizer.electronicstore.exceptions.BusinessException;
-import com.abstractionizer.electronicstore.model.product.ProductInBasketDto;
+import com.abstractionizer.electronicstore.model.product.ProductVo;
 import com.abstractionizer.electronicstore.service.BasketService;
 import com.abstractionizer.electronicstore.storage.basket.Basket;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,31 +34,31 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
-    public Map<Integer, ProductInBasketDto> getBasketOrGenerate(@NotNull final String basketId) {
+    public Map<Integer, ProductVo> getBasketOrGenerate(@NotNull final String basketId) {
         return Optional.ofNullable(basket.getBasket().get(basketId)).orElse(new HashMap<>());
     }
 
     @Override
-    public void putBasketBack(@NonNull final String basketId, @NonNull final Map<Integer, ProductInBasketDto> basket) {
+    public void putBasketBack(@NonNull final String basketId, @NonNull final Map<Integer, ProductVo> basket) {
         this.basket.getBasket().put(basketId, basket);
     }
 
     @Override
-    public Map<Integer, ProductInBasketDto> getBasketOrThrow(@NonNull final String basketId) {
+    public Map<Integer, ProductVo> getBasketOrThrow(@NonNull final String basketId) {
         return Optional.ofNullable(basket.getBasket().get(basketId))
                 .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("Invalid basket id '%s'", basketId)));
     }
 
     @Override
-    public ProductInBasketDto getProductFromBasketOrThrow(@NonNull final Map<Integer, ProductInBasketDto> basket, @NonNull final Integer productId) {
+    public ProductVo getProductFromBasketOrThrow(@NonNull final Map<Integer, ProductVo> basket, @NonNull final Integer productId) {
         return Optional.ofNullable(basket.get(productId))
                 .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("This basket does not have this product! id: '%s'", productId)));
     }
 
     @SneakyThrows
     public static void main(String[] args) {
-        Map<Integer,ProductInBasketDto> basket = new HashMap<>();
-        ProductInBasketDto dto1 = new ProductInBasketDto();
+        Map<Integer, ProductVo> basket = new HashMap<>();
+        ProductVo dto1 = new ProductVo();
         dto1.setProductId(1);
         dto1.setProductName("name");
         dto1.setUnitPrice(BigDecimal.TEN);
@@ -71,7 +71,7 @@ public class BasketServiceImpl implements BasketService {
 
 
         String b = "{\"1\":{\"productId\":1,\"productName\":\"name\",\"unitPrice\":10,\"quantity\":1}}";
-        Map<Integer, ProductInBasketDto> map = objectMapper.readValue(b, Map.class);
+        Map<Integer, ProductVo> map = objectMapper.readValue(b, Map.class);
         System.out.println(map);
     }
 }

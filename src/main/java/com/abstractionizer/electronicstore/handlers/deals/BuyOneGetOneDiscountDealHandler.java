@@ -2,8 +2,10 @@ package com.abstractionizer.electronicstore.handlers.deals;
 
 import com.abstractionizer.electronicstore.enumerations.DealType;
 import com.abstractionizer.electronicstore.exceptions.BusinessException;
-import com.abstractionizer.electronicstore.model.deal.CreateOneGetOneDealDto;
+import com.abstractionizer.electronicstore.model.deal.CreateOneGetOneDiscountPolicy;
 import com.abstractionizer.electronicstore.model.deal.BuyOneGetOneDiscountPolicy;
+import com.abstractionizer.electronicstore.model.product.ProductVo;
+import com.abstractionizer.electronicstore.model.receipt.ReceiptDto;
 import com.abstractionizer.electronicstore.service.DealService;
 import com.abstractionizer.electronicstore.service.ProductService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.DealEntity;
@@ -16,16 +18,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import static com.abstractionizer.electronicstore.errors.Error.BAD_REQUEST_ERROR;
 
 @Slf4j
 @Component
-public class BuyOneGetOneDiscountHandlerAbstract extends AbstractDealHandler<CreateOneGetOneDealDto> {
+public class BuyOneGetOneDiscountDealHandler extends AbstractDealHandler<CreateOneGetOneDiscountPolicy> {
 
     private final ProductService productService;
-    public BuyOneGetOneDiscountHandlerAbstract(ObjectMapper objectMapper, DealService dealService,
-                                               ProductService productService) {
+    public BuyOneGetOneDiscountDealHandler(ObjectMapper objectMapper, DealService dealService,
+                                           ProductService productService) {
         super(objectMapper, dealService);
         this.productService = productService;
     }
@@ -34,7 +37,7 @@ public class BuyOneGetOneDiscountHandlerAbstract extends AbstractDealHandler<Cre
     @SneakyThrows
     @Override
     public void createDeal(@NonNull final HttpServletRequest request) {
-        CreateOneGetOneDealDto dto = this.convertRequestToDeal(request);
+        CreateOneGetOneDiscountPolicy dto = this.convertRequestToDeal(request);
         this.validateCreateDealDto(dto);
 
         productService.ifProductNotExistsThenThrow(dto.getProductId());
@@ -57,14 +60,55 @@ public class BuyOneGetOneDiscountHandlerAbstract extends AbstractDealHandler<Cre
         dealService.insert(deal);
     }
 
-    @SneakyThrows
     @Override
-    public CreateOneGetOneDealDto convertRequestToDeal(@NonNull final HttpServletRequest request) {
-        return objectMapper.readValue(request.getInputStream(), CreateOneGetOneDealDto.class);
+    public DealType getDealType() {
+        return DealType.BUY_ONE_GET_ONE_DISCOUNT;
+    }
+    @Override
+    public ReceiptDto apply(@NonNull final ReceiptDto dto, @NonNull final String dealName, @NonNull final String policyStr) {
+
+        CreateOneGetOneDiscountPolicy dealParam = this.policyStrToDealParam(policyStr);
+
+        ProductVo productVo = dto.getBasket().get(dealParam.getProductId());
+        if(Objects.isNull(productVo)){
+            return dto;
+        }
+
+        dto.getDealsApplied().add(dealName);
+
+        Integer quantity = productVo.getQuantity();
+        BigDecimal subTotal = BigDecimal.ZERO;
+        boolean isSecondItem = false;
+
+        for(int i = 0; i < quantity; i++){
+            BigDecimal unitPrice = productVo.getUnitPrice();
+            if(isSecondItem){
+                unitPrice = unitPrice.multiply(dealParam.getDiscount());
+            }
+            subTotal = subTotal.add(unitPrice);
+            isSecondItem = !isSecondItem;
+        }
+
+        productVo.setSubTotal(subTotal);
+
+        return dto;
     }
 
+    @SneakyThrows
     @Override
-    public void validateCreateDealDto(@NonNull final CreateOneGetOneDealDto dto) {
+    public CreateOneGetOneDiscountPolicy convertRequestToDeal(@NonNull final HttpServletRequest request) {
+        return objectMapper.readValue(request.getInputStream(), CreateOneGetOneDiscountPolicy.class);
+    }
+
+    @SneakyThrows
+    @Override
+    protected CreateOneGetOneDiscountPolicy policyStrToDealParam(@NonNull final String policy) {
+        return objectMapper.readValue(policy, CreateOneGetOneDiscountPolicy.class);
+    }
+
+
+    @Override
+    public void validateCreateDealDto(@NonNull final CreateOneGetOneDiscountPolicy dto) {
         this.validateName(dto.getName());
         this.validateApplyOrder(dto.getApplyOrder());
         this.validateStackable(dto.getStackable());
@@ -76,10 +120,5 @@ public class BuyOneGetOneDiscountHandlerAbstract extends AbstractDealHandler<Cre
             throw new BusinessException(BAD_REQUEST_ERROR, "CreateOneGetOneDiscountDto discount attribute must not be null and should be greater than 0 and less and 1");
         }
 
-    }
-
-    @Override
-    public DealType getDealType() {
-        return DealType.BUY_ONE_GET_ONE_DISCOUNT;
     }
 }

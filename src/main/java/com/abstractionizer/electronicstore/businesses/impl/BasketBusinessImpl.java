@@ -1,8 +1,8 @@
 package com.abstractionizer.electronicstore.businesses.impl;
 
 import com.abstractionizer.electronicstore.businesses.BasketBusiness;
-import com.abstractionizer.electronicstore.model.product.BasketDto;
-import com.abstractionizer.electronicstore.model.product.ProductInBasketDto;
+import com.abstractionizer.electronicstore.model.basket.BasketVo;
+import com.abstractionizer.electronicstore.model.product.ProductVo;
 import com.abstractionizer.electronicstore.service.BasketService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Slf4j
@@ -23,56 +24,59 @@ public class BasketBusinessImpl implements BasketBusiness {
     }
 
     @Override
-    public BasketDto putProductIntoBasket(@Nullable String basketId, @NonNull final ProductEntity product) {
+    public BasketVo putProductIntoBasket(@Nullable String basketId, @NonNull final ProductEntity product) {
 
         basketId = basketService.checkBasketIdOrGenerate(basketId);
 
-        Map<Integer, ProductInBasketDto> basket = basketService.getBasketOrGenerate(basketId);
+        Map<Integer, ProductVo> basket = basketService.getBasketOrGenerate(basketId);
         log.info("before: {}", basket);
 
-        ProductInBasketDto productInBasketDto = basket.getOrDefault(product.getId(),
-                ProductInBasketDto.builder()
+        ProductVo productVo = basket.getOrDefault(product.getId(),
+                ProductVo.builder()
                         .productId(product.getId())
                         .productType(product.getType())
                         .productName(product.getName())
                         .quantity(0)
                         .unitPrice(product.getPrice())
+                        .subTotal(BigDecimal.ZERO)
                         .build()
         );
 
-        productInBasketDto.setQuantity(productInBasketDto.getQuantity() + 1);
-        basket.put(product.getId(), productInBasketDto);
+        productVo.setQuantity(productVo.getQuantity() + 1);
+        productVo.setSubTotal(productVo.getSubTotal().add(productVo.getUnitPrice()));
+        basket.put(product.getId(), productVo);
 
         basketService.putBasketBack(basketId, basket);
         log.info("after: {}", basket);
 
-        return BasketDto.builder()
+        return BasketVo.builder()
                 .basketId(basketId)
                 .basket(basket)
                 .build();
     }
 
     @Override
-    public BasketDto removeProductFromBasket(@NonNull final String basketId, @NonNull final Integer productId) {
+    public BasketVo removeProductFromBasket(@NonNull final String basketId, @NonNull final Integer productId) {
 
-        Map<Integer, ProductInBasketDto> basket = basketService.getBasketOrThrow(basketId);
+        Map<Integer, ProductVo> basket = basketService.getBasketOrThrow(basketId);
 
-        ProductInBasketDto productInBasket = basketService.getProductFromBasketOrThrow(basket, productId);
+        ProductVo productVo = basketService.getProductFromBasketOrThrow(basket, productId);
 
-        if(productInBasket.getQuantity() <= 1){
+        if(productVo.getQuantity() <= 1){
             basket.remove(productId);
-            return BasketDto.builder()
+            return BasketVo.builder()
                     .basketId(basketId)
                     .basket(basket)
                     .build();
         }
 
-        productInBasket.setQuantity(productInBasket.getQuantity() - 1);
-        basket.put(productId, productInBasket);
+        productVo.setQuantity(productVo.getQuantity() - 1);
+        productVo.setSubTotal(productVo.getSubTotal().subtract(productVo.getUnitPrice()));
+        basket.put(productId, productVo);
 
         basketService.putBasketBack(basketId, basket);
 
-        return BasketDto.builder()
+        return BasketVo.builder()
                 .basketId(basketId)
                 .basket(basket)
                 .build();

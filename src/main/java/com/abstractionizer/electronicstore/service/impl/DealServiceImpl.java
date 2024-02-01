@@ -1,6 +1,7 @@
 package com.abstractionizer.electronicstore.service.impl;
 
 import com.abstractionizer.electronicstore.exceptions.BusinessException;
+import com.abstractionizer.electronicstore.model.deal.DealVo;
 import com.abstractionizer.electronicstore.service.DealService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.DealEntity;
 import com.abstractionizer.electronicstore.storage.rdbms.mappers.DealMapper;
@@ -42,7 +43,7 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public List<DealEntity> getAllDealsInAscOrderByApplyOrder() {
+    public List<DealVo> getAllDealsOrderByApplyOrder() {
         return dealMapper.selectAllDealsInAscOrderByApplyOrder();
     }
 

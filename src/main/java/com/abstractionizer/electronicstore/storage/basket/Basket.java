@@ -1,6 +1,6 @@
 package com.abstractionizer.electronicstore.storage.basket;
 
-import com.abstractionizer.electronicstore.model.product.ProductInBasketDto;
+import com.abstractionizer.electronicstore.model.product.ProductVo;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Basket {
 
-    private final ConcurrentHashMap<String, Map<Integer, ProductInBasketDto>> basket;
+    private final ConcurrentHashMap<String, Map<Integer, ProductVo>> basket;
 
     public Basket(){
         basket = new ConcurrentHashMap<>();

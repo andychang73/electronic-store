@@ -1,5 +1,6 @@
 package com.abstractionizer.electronicstore.service;
 
+import com.abstractionizer.electronicstore.model.deal.DealVo;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.DealEntity;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public interface DealService {
 
     void ifDealNameExistThenThrow(String name);
 
-    List<DealEntity> getAllDealsInAscOrderByApplyOrder();
+    List<DealVo> getAllDealsOrderByApplyOrder();
 }

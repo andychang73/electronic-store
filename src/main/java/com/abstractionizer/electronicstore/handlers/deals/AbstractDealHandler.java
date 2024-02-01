@@ -3,6 +3,7 @@ package com.abstractionizer.electronicstore.handlers.deals;
 import com.abstractionizer.electronicstore.enumerations.DealType;
 import com.abstractionizer.electronicstore.exceptions.BusinessException;
 import com.abstractionizer.electronicstore.model.deal.BaseDeal;
+import com.abstractionizer.electronicstore.model.receipt.ReceiptDto;
 import com.abstractionizer.electronicstore.service.DealService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.util.StringUtils;
@@ -22,8 +23,12 @@ public abstract class AbstractDealHandler<T extends BaseDeal> {
 
     public abstract void createDeal(HttpServletRequest request);
     public abstract DealType getDealType();
-    abstract T convertRequestToDeal(HttpServletRequest request);
-    abstract void validateCreateDealDto(T createDealDto);
+
+    public abstract ReceiptDto apply(ReceiptDto dto, String dealName, String policyStr);
+    protected abstract T convertRequestToDeal(HttpServletRequest request);
+
+    protected abstract T policyStrToDealParam(String policy);
+    protected abstract void validateCreateDealDto(T createDealDto);
 
 
     protected void validateName(String name){

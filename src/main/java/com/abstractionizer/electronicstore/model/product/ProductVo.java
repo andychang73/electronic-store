@@ -11,10 +11,11 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductInBasketDto {
+public class ProductVo {
     private Integer productId;
     private ProductType productType;
     private String productName;
-    private BigDecimal unitPrice;
     private Integer quantity;
+    private BigDecimal unitPrice;
+    private BigDecimal subTotal;
 }

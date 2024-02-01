@@ -3,5 +3,6 @@ package com.abstractionizer.electronicstore.enumerations;
 public enum DealType {
 
     BUY_ONE_GET_ONE_DISCOUNT,
-    FIXED_AMOUNT_OFF
+    DISCOUNT_BY_PRODUCT_TYPE
+    ;
 }

@@ -16,9 +16,11 @@
 
     </select>
     <select id="selectAllDealsInAscOrderByApplyOrder"
-            resultType="com.abstractionizer.electronicstore.storage.rdbms.entities.DealEntity">
-        SELECT *
+            resultType="com.abstractionizer.electronicstore.model.deal.DealVo">
+        SELECT name, policy, type
         FROM deal
         ORDER BY apply_order
     </select>
+
+
 </mapper>

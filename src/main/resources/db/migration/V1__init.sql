@@ -35,4 +35,4 @@ INSERT INTO product(type, name, price, stock) VALUES('COMPUTER','Mac',50000.00,1
 INSERT INTO product(type, name, price, stock) VALUES('MOBILE_PHONE','iPhone',5000.00,1);
 INSERT INTO product(type, name, price, stock) VALUES('TABLET','iPad',6000.00,0);
 
-INSERT INTO deal(name, type, policy, apply_order, stackable) VALUES('deal','BUY_ONE_GET_ONE_DISCOUNT','test test test', 1, true);
+INSERT INTO deal(name, type, policy, apply_order, stackable) VALUES('Buy one get second one 50% off','BUY_ONE_GET_ONE_DISCOUNT','{"productId":1,"discount":0.5}', 1, true);
