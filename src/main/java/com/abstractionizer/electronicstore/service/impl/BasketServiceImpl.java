@@ -4,14 +4,11 @@ import com.abstractionizer.electronicstore.exceptions.BusinessException;
 import com.abstractionizer.electronicstore.model.product.ProductVo;
 import com.abstractionizer.electronicstore.service.BasketService;
 import com.abstractionizer.electronicstore.storage.basket.Basket;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotNull;
-import lombok.SneakyThrows;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,25 +50,5 @@ public class BasketServiceImpl implements BasketService {
     public ProductVo getProductFromBasketOrThrow(@NonNull final Map<Integer, ProductVo> basket, @NonNull final Integer productId) {
         return Optional.ofNullable(basket.get(productId))
                 .orElseThrow(() -> new BusinessException(DATA_NOT_FOUND, String.format("This basket does not have this product! id: '%s'", productId)));
-    }
-
-    @SneakyThrows
-    public static void main(String[] args) {
-        Map<Integer, ProductVo> basket = new HashMap<>();
-        ProductVo dto1 = new ProductVo();
-        dto1.setProductId(1);
-        dto1.setProductName("name");
-        dto1.setUnitPrice(BigDecimal.TEN);
-        dto1.setQuantity(1);
-
-        basket.put(dto1.getProductId(), dto1);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println(objectMapper.writeValueAsString(basket));
-
-
-        String b = "{\"1\":{\"productId\":1,\"productName\":\"name\",\"unitPrice\":10,\"quantity\":1}}";
-        Map<Integer, ProductVo> map = objectMapper.readValue(b, Map.class);
-        System.out.println(map);
     }
 }
