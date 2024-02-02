@@ -29,14 +29,14 @@ public class BuyOneGetOneDiscountDealHandler extends AbstractDealHandler<CreateO
     private final ProductService productService;
     public BuyOneGetOneDiscountDealHandler(ObjectMapper objectMapper, DealService dealService,
                                            ProductService productService) {
-        super(objectMapper, dealService, productService);
+        super(objectMapper, dealService);
         this.productService = productService;
     }
 
     @Transactional
     @SneakyThrows
     @Override
-    public void createDeal(@NonNull final HttpServletRequest request) {
+    public void createDeal(final HttpServletRequest request) {
         CreateOneGetOneDiscountPolicy dto = this.convertRequestToDeal(request);
         this.validateCreateDealDto(dto);
 
@@ -76,9 +76,10 @@ public class BuyOneGetOneDiscountDealHandler extends AbstractDealHandler<CreateO
 
         Integer quantity = productVo.getQuantity();
 
-        if(quantity > 1){
-            dto.getDealsApplied().add(dealName);
+        if(quantity < 2){
+            return dto;
         }
+        dto.getDealsApplied().add(dealName);
 
         BigDecimal subTotal = BigDecimal.ZERO;
         boolean isSecondItem = false;
@@ -99,7 +100,7 @@ public class BuyOneGetOneDiscountDealHandler extends AbstractDealHandler<CreateO
 
     @SneakyThrows
     @Override
-    public CreateOneGetOneDiscountPolicy convertRequestToDeal(@NonNull final HttpServletRequest request) {
+    public CreateOneGetOneDiscountPolicy convertRequestToDeal(HttpServletRequest request) {
         return objectMapper.readValue(request.getInputStream(), CreateOneGetOneDiscountPolicy.class);
     }
 
