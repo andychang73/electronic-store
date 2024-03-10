@@ -21,6 +21,7 @@ public class RedisUtil {
     private final Redis redis;
     private final ObjectMapper objectMapper;
 
+
     public RedisUtil(Redis redis, ObjectMapper objectMapper) {
         this.redis = redis;
         this.objectMapper = objectMapper;

@@ -8,11 +8,14 @@ import com.abstractionizer.electronicstore.model.basket.BasketVo;
 import com.abstractionizer.electronicstore.model.product.CreateProductDto;
 import com.abstractionizer.electronicstore.service.ProductService;
 import com.abstractionizer.electronicstore.storage.rdbms.entities.ProductEntity;
+import com.abstractionizer.electronicstore.storage.redis.Redis;
 import com.abstractionizer.electronicstore.utils.RedisUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -26,8 +29,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProductBusinessImplTest {
 
-    @Mock
-    RedisUtil redisUtil;
+    @Spy
+    RedisUtil redisUtil = new RedisUtil(new Redis(), new ObjectMapper());
 
     @Mock
     BasketBusiness basketBusiness;
@@ -58,6 +61,44 @@ class ProductBusinessImplTest {
         verify(productService, never()).checkIfInputNamesDuplicated(anyInt(), anyInt());
         verify(productService, never()).ifNameExistsThenThrow(any(Collection.class));
         verify(productService, never()).insertBatch(any(Collection.class));
+    }
+
+    @Test
+    public void testCreateProduct_WhenLockIsAcquiredButNamesDuplicated_ThenThrowException() {
+
+//        CreateProductDto dto1 = new CreateProductDto();
+//        dto1.setName("Product1");
+//        CreateProductDto dto2 = new CreateProductDto();
+//        dto2.setName("Product1");
+//        CreateProductDto dto3 = new CreateProductDto();
+//        dto3.setName("Product2");
+
+        List<CreateProductDto> dtos = Arrays.asList(
+                new CreateProductDto(),
+                new CreateProductDto(),
+                new CreateProductDto() // Duplicated product name
+        );
+//        Set<String> productNames = Set.of("Product1", "Product2");
+
+        String uuid = UUID.randomUUID().toString();
+        doReturn(uuid).when(redisUtil).tryGetLock(anyString());
+        doReturn(uuid).when(redisUtil).get(anyString(), any());
+        doReturn(true).when(redisUtil).deleteKey(anyString());
+
+        doThrow(BusinessException.class)
+                .when(productService)
+                .checkIfInputNamesDuplicated(anyInt(), anyInt());
+
+        assertThrows(BusinessException.class,
+                () -> productBusiness.createProducts(dtos),
+                "Duplicate product names");
+
+        // Verify interactions
+        verify(redisUtil, times(1)).doWithRedisLockOrThrow(anyString(), any());
+        verify(productService, times(1)).getProductNameSet(any());
+        verify(productService, times(1)).checkIfInputNamesDuplicated(anyInt(), anyInt());
+        verify(productService, never()).ifNameExistsThenThrow(anyCollection());
+        verify(productService, never()).insertBatch(anyList());
     }
 
     @Test
@@ -94,7 +135,7 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testRemove_WhenProductDoesNotExists_ThenThrowBusinessException(){
+    public void testRemove_WhenProductDoesNotExists_ThenThrowBusinessException() {
 
         doThrow(BusinessException.class)
                 .when(productService)
@@ -108,7 +149,7 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testRemove_WhenProductExists_ThenAllMethodsAreExecuted(){
+    public void testRemove_WhenProductExists_ThenAllMethodsAreExecuted() {
 
         productBusiness.remove(1);
 
@@ -117,13 +158,13 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testSelectProduct_WhenProductDoesNotExists_ThenThrowBusinessException(){
+    public void testSelectProduct_WhenProductDoesNotExists_ThenThrowBusinessException() {
         doThrow(BusinessException.class)
                 .when(productService)
                 .ifProductNotExistsThenThrow(anyInt());
 
         assertThrows(BusinessException.class,
-                () -> productBusiness.selectProduct(1,"1"),
+                () -> productBusiness.selectProduct(1, "1"),
                 "Product id '1' was not found");
 
         verify(productService, never()).ifProductStockInsufficientThenThrow(anyInt());
@@ -132,7 +173,7 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testSelectProduct_WhenProductStockInsufficient_ThenThrowBusinessException(){
+    public void testSelectProduct_WhenProductStockInsufficient_ThenThrowBusinessException() {
 
         ProductEntity product = new ProductEntity();
         product.setId(1);
@@ -145,7 +186,7 @@ class ProductBusinessImplTest {
 
         assertThrows(
                 BusinessException.class,
-                () -> productBusiness.selectProduct(1,"1"),
+                () -> productBusiness.selectProduct(1, "1"),
                 "Insufficient stock"
         );
 
@@ -157,7 +198,7 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testSelectProduct_WhenAllValidationWentThrow_ThenAllMethodsAreExecuted(){
+    public void testSelectProduct_WhenAllValidationWentThrow_ThenAllMethodsAreExecuted() {
 
         ProductEntity product = new ProductEntity();
         product.setId(1);
@@ -166,7 +207,7 @@ class ProductBusinessImplTest {
         when(productService.selectProductForUpdateOrThrow(anyInt())).thenReturn(product);
 
 
-        productBusiness.selectProduct(1,"1");
+        productBusiness.selectProduct(1, "1");
 
         verify(productService, times(1)).ifProductNotExistsThenThrow(anyInt());
         verify(productService, times(1)).selectProductForUpdateOrThrow(anyInt());
@@ -176,14 +217,14 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testRemoveProduct_WhenProductDoesNotExist_ThenThrowBusinessException(){
+    public void testRemoveProduct_WhenProductDoesNotExist_ThenThrowBusinessException() {
 
         doThrow(BusinessException.class)
                 .when(productService)
                 .ifProductNotExistsThenThrow(anyInt());
 
         assertThrows(BusinessException.class,
-                () -> productBusiness.removeProduct(1,"1"),
+                () -> productBusiness.removeProduct(1, "1"),
                 "Product id '1' was not found");
 
         verify(productService, times(1)).ifProductNotExistsThenThrow(anyInt());
@@ -193,9 +234,9 @@ class ProductBusinessImplTest {
     }
 
     @Test
-    public void testRemoveProduct_WhenAllValidationWentThrow_ThenAllMethodsAreExecuted(){
+    public void testRemoveProduct_WhenAllValidationWentThrow_ThenAllMethodsAreExecuted() {
 
-        when(basketBusiness.removeProductFromBasket(anyString(),anyInt())).thenReturn(new BasketVo());
+        when(basketBusiness.removeProductFromBasket(anyString(), anyInt())).thenReturn(new BasketVo());
 
         ProductEntity product = new ProductEntity();
         product.setStock(0);
